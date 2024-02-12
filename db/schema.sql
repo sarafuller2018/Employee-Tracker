@@ -2,6 +2,7 @@ DROP DATABASE IF EXISTS employees_db;
 CREATE DATABASE employees_db_db;
 
 USE employees_db;
+SELECT DATABASE();
 
 CREATE TABLE department (
   id INT NOT NULL,
