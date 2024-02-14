@@ -58,7 +58,66 @@ const questions = [
         message: "Which department is the new role under?",
         choices: ["Partners", "Accounting", "Valuation", "Marketing", "Software Development"], //how do i do this
         name: "newRoleDepartment",
+    },
+
+    {
+        when: input => {
+            return input.initialQuestion == "Add An Employee"
+        },
+        type: "input",
+        message: "What is the new employee's first name?",
+        name: "newEmployeeFirstName",
+    },
+
+    {
+        when: input => {
+            return input.initialQuestion == "Add An Employee"
+        },
+        type: "input",
+        message: "What is the new employee's last name?",
+        name: "newEmployeeLastName",
+    },
+
+    {
+        when: input => {
+            return input.initialQuestion == "Add An Employee"
+        },
+        type: "list",
+        message: "What is the new employee's role?",
+        choices: [], //how do i do this
+        name: "newEmployeeRole",
+    },
+
+    {
+        when: input => {
+            return input.initialQuestion == "Add An Employee"
+        },
+        type: "list",
+        message: "Who is the new employee's manager?",
+        choices: [], //how do i do this
+        name: "newEmployeeManager",
+    },
+
+    {
+        when: input => {
+            return input.initialQuestion == "Update Employee Role"
+        },
+        type: "list",
+        message: "Which employee's role would you like to update?",
+        choices: [], //how do i do this
+        name: "EmployeeUpdate",
+    },
+
+    {
+        when: input => {
+            return input.initialQuestion == "Update Employee Role"
+        },
+        type: "list",
+        message: "Which role would you like to assign the selected employee?",
+        choices: [], //how do i do this
+        name: "EmployeeRoleUpdate",
     }
+    
 ]
 
 function renderInformation() {
@@ -105,7 +164,8 @@ function renderInformation() {
                 let insertRole = responses.newRoleName;
                 let insertRoleSalary = responses.newRoleSalary;
                 let insertRoleDepartment = responses.newRoleDepartment;
-                db.query(`INSERT INTO role (title, salary, department_id) VALUES (?)`, insertRole, insertRoleSalary, insertRoleDepartment, (err, result) => {
+                let roleValues = [insertRole, insertRoleSalary, insertRoleDepartment]
+                db.query(`INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`, roleValues, (err, result) => {
                     if (err) {
                         console.log(err);
                     }
@@ -113,14 +173,31 @@ function renderInformation() {
                 });
 
             } else if (responses.initialQuestion == "Add An Employee") {
-                console.log("hello!")
+                let insertEmployeeFirstName = responses.newEmployeeFirstName;
+                let insertEmployeeLastName = responses.newREmployeeLastName;
+                let insertNewEmployeeRole = responses.newEmployeeRole;
+                let insertNewEmployeeManager = responses.newEmployeeManager;
+                let employeeValues = [insertEmployeeFirstName, insertEmployeeLastName, insertNewEmployeeRole, insertNewEmployeeManager]
+                db.query(`INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?, ?)`, employeeValues, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log(`Added ${insertEmployeeFirstName} ${insertEmployeeLastName} into database!`);
+                });
 
             } else if (responses.initialQuestion == "Update Employee Role") {
-                console.log("hello!")
+                let insertEmployeeRoleUpdate = responses.insertEmployeeRoleUpdate;
+                let insertEmployeeUpdate = responses.EmployeeUpdate;
+                db.query(`UPDATE employee SET role_id = ______ WHERE id = ?)`, employeeValues, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log(`Updated employee!`);
+                });
 
             } else {
-                console.log("hello!")
-
+                console.log("Goodbye!")
+                process.exit();
             }
         })
 };
@@ -130,4 +207,3 @@ renderInformation();
 // do the views first
 // adds next
 // update employee role
-// quit ends mysql goodbye message then process.exit()
