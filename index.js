@@ -57,10 +57,10 @@ const questions = [
         },
         type: "list",
         message: "Which department is the new role under?",
-        choices: async function() {
+        choices: async function () {
             try {
                 const departments = await renderDepartments(); // Wait for departments to be fetched
-                return departments.map(department => ({name: department.name, value: department.value}));
+                return departments.map(department => ({ name: department.name, value: department.value }));
             } catch (error) {
                 console.error("Error fetching departments:", error);
                 return []; // Return empty array in case of error
@@ -93,10 +93,10 @@ const questions = [
         },
         type: "list",
         message: "Who is the new employee's manager?",
-        choices: async function() {
+        choices: async function () {
             try {
                 const managers = await renderEmployees(); // Wait for manager to be fetched
-                return managers.map(manager => ({name: manager.FirstName + " " + manager.LastName, value: manager.value}));
+                return managers.map(manager => ({ name: manager.FirstName + " " + manager.LastName, value: manager.value }));
             } catch (error) {
                 console.error("Error fetching roles:", error);
                 return []; // Return empty array in case of error
@@ -111,10 +111,10 @@ const questions = [
         },
         type: "list",
         message: "What is the new employee's role?",
-        choices: async function() {
+        choices: async function () {
             try {
                 const roles = await renderRoles(); // Wait for roles to be fetched
-                return roles.map(role => ({name: role.name, value: role.value}));
+                return roles.map(role => ({ name: role.name, value: role.value }));
             } catch (error) {
                 console.error("Error fetching roles:", error);
                 return []; // Return empty array in case of error
@@ -129,10 +129,10 @@ const questions = [
         },
         type: "list",
         message: "Which employee's role would you like to update?",
-        choices: async function() {
+        choices: async function () {
             try {
                 const employees = await renderEmployees(); // Wait for employees to be fetched
-                return employees.map(employee => ({name: employee.FirstName + " " + employee.LastName, value: employee.value}));
+                return employees.map(employee => ({ name: employee.FirstName + " " + employee.LastName, value: employee.value }));
             } catch (error) {
                 console.error("Error fetching roles:", error);
                 return []; // Return empty array in case of error
@@ -147,10 +147,10 @@ const questions = [
         },
         type: "list",
         message: "Which role would you like to assign the selected employee?",
-        choices: async function() {
+        choices: async function () {
             try {
                 const roles = await renderRoles(); // Wait for roles to be fetched
-                return roles.map(role => ({name: role.name, value: role.value}));
+                return roles.map(role => ({ name: role.name, value: role.value }));
             } catch (error) {
                 console.error("Error fetching roles:", error);
                 return []; // Return empty array in case of error
@@ -158,7 +158,7 @@ const questions = [
         },
         name: "EmployeeRoleToUpdate",
     }
-    
+
 ]
 
 // Functions to get choices in prompt
@@ -175,7 +175,7 @@ function renderDepartments() {
 }
 
 function renderRoles() {
-   return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         db.query('SELECT role.title AS name, role.id AS value FROM role', function (err, results) {
             if (err) {
                 reject(err);
@@ -187,7 +187,7 @@ function renderRoles() {
 }
 
 function renderEmployees() {
-   return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         db.query('SELECT employee.first_name AS FirstName, employee.last_name AS LastName, employee.id AS value FROM employee', function (err, results) {
             if (err) {
                 reject(err);
@@ -273,7 +273,8 @@ function renderInformation() {
             } else if (responses.initialQuestion == "Update Employee Role") {
                 let insertEmployeeToUpdate = responses.EmployeeToUpdate;
                 let insertEmployeeRoleToUpdate = responses.EmployeeRoleToUpdate;
-                db.query(`UPDATE employee SET role_id = ? WHERE id = ?`, [insertEmployeeRoleToUpdate, insertEmployeeToUpdate], (err, result) => {
+                let updateRoleValues = [insertEmployeeRoleToUpdate, insertEmployeeToUpdate]
+                db.query(`UPDATE employee SET role_id = ? WHERE id = ?`, updateRoleValues, (err, result) => {
                     if (err) {
                         console.log(err);
                     }
