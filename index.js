@@ -21,7 +21,7 @@ const questions = [
         type: "list",
         message: "What would you like to do?",
         name: "initialQuestion",
-        choices: ["View All Departments", "View All Roles", "View All Employees", "Add A Department", "Add A Role", "Add An Employee", "Update Employee Role", "Quit"]
+        choices: ["View All Departments", "View All Roles", "View All Employees", "Add A Department", "Add A Role", "Add An Employee", "Update Employee Role", "Update Employee Manager", "Quit"]
     },
 
     {
@@ -157,6 +157,42 @@ const questions = [
             }
         },
         name: "EmployeeRoleToUpdate",
+    },
+
+    {
+        when: input => {
+            return input.initialQuestion == "Update Employee Manager"
+        },
+        type: "list",
+        message: "Which employee has a new manager?",
+        choices: async function () {
+            try {
+                const employees = await renderEmployees(); // Wait for employees to be fetched
+                return employees.map(employee => ({ name: employee.FirstName + " " + employee.LastName, value: employee.value }));
+            } catch (error) {
+                console.error("Error fetching roles:", error);
+                return []; // Return empty array in case of error
+            }
+        },
+        name: "EmployeeManagerToUpdate",
+    },
+
+    {
+        when: input => {
+            return input.initialQuestion == "Update Employee Manager"
+        },
+        type: "list",
+        message: "Who is the employee's new manager?",
+        choices: async function () {
+            try {
+                const managers = await renderEmployees(); // Wait for managers to be fetched
+                return managers.map(manager => ({ name: manager.FirstName + " " + manager.LastName, value: manager.value }));
+            } catch (error) {
+                console.error("Error fetching roles:", error);
+                return []; // Return empty array in case of error
+            }
+        },
+        name: "EmployeeNewManager",
     }
 
 ]
@@ -278,7 +314,19 @@ function renderInformation() {
                     if (err) {
                         console.log(err);
                     }
-                    console.log(`Updated employee!`);
+                    console.log(`Updated employee role!`);
+                    renderInformation();
+                });
+
+            } else if (responses.initialQuestion == "Update Employee Manager") {
+                let insertEmployeeManagerToUpdate = responses.EmployeeManagerToUpdate;
+                let insertEmployeeNewManager = responses.EmployeeNewManager;
+                let updateManagerValues = [insertEmployeeNewManager, insertEmployeeManagerToUpdate]
+                db.query(`UPDATE employee SET manager_id = ? WHERE id = ?`, updateManagerValues, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log(`Updated employee manager!`);
                     renderInformation();
                 });
 
