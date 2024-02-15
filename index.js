@@ -56,7 +56,7 @@ const questions = [
         },
         type: "list",
         message: "Which department is the new role under?",
-        choices: ["Partners", "Accounting", "Valuation", "Marketing", "Software Development"], //how do i do this
+        choices: [renderDepartments()], //how do i do this
         name: "newRoleDepartment",
     },
 
@@ -119,6 +119,17 @@ const questions = [
     }
     
 ]
+
+function renderDepartments() {
+    let department = null;
+    db.query('SELECT department.name AS name, department.id AS value FROM department', function (err, results) {
+        // console.log(results);
+        department = results;
+        
+        // console.log(department)
+        return department
+    });
+}
 
 function renderInformation() {
     inquirer
