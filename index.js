@@ -1,15 +1,16 @@
 const inquirer = require("inquirer");
 const mysql = require('mysql2');
+require('dotenv').config();
 
 // Connect mysql to database
 const db = mysql.createConnection(
     {
         host: 'localhost',
         // MySQL username,
-        user: 'root',
+        user: process.env.DB_USER,
         // MySQL password
-        password: 'dogziggy',
-        database: 'employees_db'
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME
     },
     console.log(`Successfully connected to employees_db!`)
 );
@@ -214,6 +215,7 @@ function renderInformation() {
                         throw err;
                     } else {
                         console.table(results);
+                        renderInformation();
                     }
                 });
 
@@ -223,6 +225,7 @@ function renderInformation() {
                         throw err;
                     } else {
                         console.table(results);
+                        renderInformation();
                     }
                 });
 
@@ -232,6 +235,7 @@ function renderInformation() {
                         throw err;
                     } else {
                         console.table(results);
+                        renderInformation();
                     }
                 });
 
@@ -242,6 +246,7 @@ function renderInformation() {
                         console.log(err);
                     }
                     console.log(`Added ${insertDepartment} into database!`);
+                    renderInformation();
                 });
 
             } else if (responses.initialQuestion == "Add A Role") {
@@ -254,6 +259,7 @@ function renderInformation() {
                         console.log(err);
                     }
                     console.log(`Added ${insertRole} into database!`);
+                    renderInformation();
                 });
 
             } else if (responses.initialQuestion == "Add An Employee") {
@@ -267,6 +273,7 @@ function renderInformation() {
                         console.log(err);
                     }
                     console.log(`Added ${insertEmployeeFirstName} ${insertEmployeeLastName} into database!`);
+                    renderInformation();
                 });
 
             } else if (responses.initialQuestion == "Update Employee Role") {
@@ -277,6 +284,7 @@ function renderInformation() {
                         console.log(err);
                     }
                     console.log(`Updated employee!`);
+                    renderInformation();
                 });
 
             } else {
@@ -290,5 +298,4 @@ renderInformation();
 
 
 // is it actually adding to database
-// how to loop questions
 // how to format tables
