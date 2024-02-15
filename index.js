@@ -163,9 +163,7 @@ const questions = [
 
 // Functions to get choices in prompt
 function renderDepartments() {
-    console.log("renderdepartments");
-
-   return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         db.query('SELECT department.name AS name, department.id AS value FROM department', function (err, results) {
             if (err) {
                 reject(err);
@@ -177,8 +175,6 @@ function renderDepartments() {
 }
 
 function renderRoles() {
-    console.log("renderroles");
-
    return new Promise((resolve, reject) => {
         db.query('SELECT role.title AS name, role.id AS value FROM role', function (err, results) {
             if (err) {
@@ -191,8 +187,6 @@ function renderRoles() {
 }
 
 function renderEmployees() {
-    console.log("renderemployees");
-
    return new Promise((resolve, reject) => {
         db.query('SELECT employee.first_name AS FirstName, employee.last_name AS LastName, employee.id AS value FROM employee', function (err, results) {
             if (err) {
@@ -295,7 +289,3 @@ function renderInformation() {
 };
 
 renderInformation();
-
-
-// is it actually adding to database
-// how to format tables
