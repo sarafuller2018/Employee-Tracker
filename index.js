@@ -56,7 +56,15 @@ const questions = [
         },
         type: "list",
         message: "Which department is the new role under?",
-        choices: [renderDepartments()], //how do i do this
+        choices: async function() {
+            try {
+                const departments = await renderDepartments(); // Wait for departments to be fetched
+                return departments.map(department => ({name: department.name, value: department.value}));
+            } catch (error) {
+                console.error("Error fetching departments:", error);
+                return []; // Return empty array in case of error
+            }
+        },
         name: "newRoleDepartment",
     },
 
@@ -83,9 +91,17 @@ const questions = [
             return input.initialQuestion == "Add An Employee"
         },
         type: "list",
-        message: "What is the new employee's role?",
-        choices: [], //how do i do this
-        name: "newEmployeeRole",
+        message: "Who is the new employee's manager?",
+        choices: async function() {
+            try {
+                const managers = await renderEmployees(); // Wait for manager to be fetched
+                return managers.map(manager => ({name: manager.FirstName + " " + manager.LastName, value: manager.value}));
+            } catch (error) {
+                console.error("Error fetching roles:", error);
+                return []; // Return empty array in case of error
+            }
+        },
+        name: "newEmployeeManager",
     },
 
     {
@@ -93,9 +109,17 @@ const questions = [
             return input.initialQuestion == "Add An Employee"
         },
         type: "list",
-        message: "Who is the new employee's manager?",
-        choices: [], //how do i do this
-        name: "newEmployeeManager",
+        message: "What is the new employee's role?",
+        choices: async function() {
+            try {
+                const roles = await renderRoles(); // Wait for roles to be fetched
+                return roles.map(role => ({name: role.name, value: role.value}));
+            } catch (error) {
+                console.error("Error fetching roles:", error);
+                return []; // Return empty array in case of error
+            }
+        },
+        name: "newEmployeeRole",
     },
 
     {
@@ -104,8 +128,16 @@ const questions = [
         },
         type: "list",
         message: "Which employee's role would you like to update?",
-        choices: [], //how do i do this
-        name: "EmployeeUpdate",
+        choices: async function() {
+            try {
+                const employees = await renderEmployees(); // Wait for employees to be fetched
+                return employees.map(employee => ({name: employee.FirstName + " " + employee.LastName, value: employee.value}));
+            } catch (error) {
+                console.error("Error fetching roles:", error);
+                return []; // Return empty array in case of error
+            }
+        },
+        name: "EmployeeToUpdate",
     },
 
     {
@@ -114,23 +146,64 @@ const questions = [
         },
         type: "list",
         message: "Which role would you like to assign the selected employee?",
-        choices: [], //how do i do this
-        name: "EmployeeRoleUpdate",
+        choices: async function() {
+            try {
+                const roles = await renderRoles(); // Wait for roles to be fetched
+                return roles.map(role => ({name: role.name, value: role.value}));
+            } catch (error) {
+                console.error("Error fetching roles:", error);
+                return []; // Return empty array in case of error
+            }
+        },
+        name: "EmployeeRoleToUpdate",
     }
     
 ]
 
+// Functions to get choices in prompt
 function renderDepartments() {
-    let department = null;
-    db.query('SELECT department.name AS name, department.id AS value FROM department', function (err, results) {
-        // console.log(results);
-        department = results;
-        
-        // console.log(department)
-        return department
+    console.log("renderdepartments");
+
+   return new Promise((resolve, reject) => {
+        db.query('SELECT department.name AS name, department.id AS value FROM department', function (err, results) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(results);
+            }
+        });
     });
 }
 
+function renderRoles() {
+    console.log("renderroles");
+
+   return new Promise((resolve, reject) => {
+        db.query('SELECT role.title AS name, role.id AS value FROM role', function (err, results) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
+
+function renderEmployees() {
+    console.log("renderemployees");
+
+   return new Promise((resolve, reject) => {
+        db.query('SELECT employee.first_name AS FirstName, employee.last_name AS LastName, employee.id AS value FROM employee', function (err, results) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(results);
+            }
+        });
+    });
+}
+
+// Runs application
 function renderInformation() {
     inquirer
         .prompt(questions)
@@ -185,11 +258,11 @@ function renderInformation() {
 
             } else if (responses.initialQuestion == "Add An Employee") {
                 let insertEmployeeFirstName = responses.newEmployeeFirstName;
-                let insertEmployeeLastName = responses.newREmployeeLastName;
-                let insertNewEmployeeRole = responses.newEmployeeRole;
+                let insertEmployeeLastName = responses.newEmployeeLastName;
                 let insertNewEmployeeManager = responses.newEmployeeManager;
-                let employeeValues = [insertEmployeeFirstName, insertEmployeeLastName, insertNewEmployeeRole, insertNewEmployeeManager]
-                db.query(`INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?, ?)`, employeeValues, (err, result) => {
+                let insertNewEmployeeRole = responses.newEmployeeRole;
+                let employeeValues = [insertEmployeeFirstName, insertEmployeeLastName, insertNewEmployeeManager, insertNewEmployeeRole]
+                db.query(`INSERT INTO employee (first_name, last_name, manager_id, role_id) VALUES (?, ?, ?, ?)`, employeeValues, (err, result) => {
                     if (err) {
                         console.log(err);
                     }
@@ -197,9 +270,9 @@ function renderInformation() {
                 });
 
             } else if (responses.initialQuestion == "Update Employee Role") {
-                let insertEmployeeRoleUpdate = responses.insertEmployeeRoleUpdate;
-                let insertEmployeeUpdate = responses.EmployeeUpdate;
-                db.query(`UPDATE employee SET role_id = ______ WHERE id = ?)`, employeeValues, (err, result) => {
+                let insertEmployeeToUpdate = responses.EmployeeToUpdate;
+                let insertEmployeeRoleToUpdate = responses.EmployeeRoleToUpdate;
+                db.query(`UPDATE employee SET role_id = ? WHERE id = ?`, [insertEmployeeRoleToUpdate, insertEmployeeToUpdate], (err, result) => {
                     if (err) {
                         console.log(err);
                     }
@@ -215,6 +288,7 @@ function renderInformation() {
 
 renderInformation();
 
-// do the views first
-// adds next
-// update employee role
+
+// is it actually adding to database
+// how to loop questions
+// how to format tables
