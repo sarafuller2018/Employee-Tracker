@@ -98,7 +98,7 @@ const questions = [
                 const managers = await renderEmployees(); // Wait for manager to be fetched
                 return managers.map(manager => ({ name: manager.FirstName + " " + manager.LastName, value: manager.value }));
             } catch (error) {
-                console.error("Error fetching roles:", error);
+                console.error("Error fetching managers:", error);
                 return []; // Return empty array in case of error
             }
         },
@@ -134,7 +134,7 @@ const questions = [
                 const employees = await renderEmployees(); // Wait for employees to be fetched
                 return employees.map(employee => ({ name: employee.FirstName + " " + employee.LastName, value: employee.value }));
             } catch (error) {
-                console.error("Error fetching roles:", error);
+                console.error("Error fetching employees:", error);
                 return []; // Return empty array in case of error
             }
         },
@@ -170,7 +170,7 @@ const questions = [
                 const employees = await renderEmployees(); // Wait for employees to be fetched
                 return employees.map(employee => ({ name: employee.FirstName + " " + employee.LastName, value: employee.value }));
             } catch (error) {
-                console.error("Error fetching roles:", error);
+                console.error("Error fetching employees:", error);
                 return []; // Return empty array in case of error
             }
         },
@@ -188,13 +188,12 @@ const questions = [
                 const managers = await renderEmployees(); // Wait for managers to be fetched
                 return managers.map(manager => ({ name: manager.FirstName + " " + manager.LastName, value: manager.value }));
             } catch (error) {
-                console.error("Error fetching roles:", error);
+                console.error("Error fetching managers:", error);
                 return []; // Return empty array in case of error
             }
         },
         name: "EmployeeNewManager",
-    }
-
+    } 
 ]
 
 // Functions to get choices in prompt
